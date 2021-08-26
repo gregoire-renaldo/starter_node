@@ -1,0 +1,21 @@
+'EADDRINUSE' already in use :
+sudo lsof -i :3000
+kill -9 {PID}
+
+to protect routes, use middleware auth:
+in router:
+const auth = require('../middleware/auth');
+const stuffCtrl = require('../controllers/stuff');
+router.get('/',     auth,   stuffCtrl.getAllStuff);
+router.post('/',    auth,   stuffCtrl.createThing);
+router.get('/:id',  auth,   stuffCtrl.getOneThing);
+router.put('/:id',  auth,   stuffCtrl.modifyThing);
+router.delete('/:id', auth, stuffCtrl.deleteThing);
+
+module.exports = router;
+
+
+Syntaxe pour l'inclusion d'un partiel EJS
+Utilisez <%- include('RELATIVE/PATH/TO/FILE') %> pour intégrer une partie de EJS dans un autre fichier.
+Le trait d'union <%- au lieu de <% pour dire à EJS de rendre le HTML brut.
+Le chemin vers le partiel est relatif au fichier actuel.
