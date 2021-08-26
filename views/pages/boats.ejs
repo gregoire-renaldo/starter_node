@@ -1,0 +1,10 @@
+<h1>boat renters index</h1>
+<h2>
+  <a href="http://localhost:3000/">http://localhost:3000/</a>
+</h2>
+<ul>
+  <% boats.forEach(function(boat) { %>
+    <li> Name:<%= boat.name %> Descri:<%= boat.description %> Price:<%= boat.price %>
+    </li>
+    <% }); %>
+</ul>

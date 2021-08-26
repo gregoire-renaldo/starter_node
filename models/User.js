@@ -7,4 +7,4 @@ const userSchema = mongoose.Schema({
   lastname: { type: String, required: true },
 });
 
-module.exports = mongoose.model('USer', userSchema);
+module.exports = mongoose.model('User', userSchema);

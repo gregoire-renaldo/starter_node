@@ -1,0 +1,46 @@
+<head>
+  <%- include('../partials/head'); %>
+</head>
+
+<h1>salut</h1>
+<h2>
+  <a href="http://localhost:3000/boat/renter/index">http://localhost:3000/boat/renter/index</a>
+</h2>
+<h2>signup</h2>
+<div>
+  <form action="/auth/signup" method="post">
+    <label for="firstname">Enter firstname: </label>
+    <input id="firstname" type="text" name="firstname" value="">
+    <label for="lastname">Enter lastname: </label>
+    <input id="lastname" type="text" name="lastname" value="">
+    <label for="email">Enter email: </label>
+    <input id="email" type="text" name="email" value="">
+    <label for="password">Enter password: </label>
+    <input id="password" type="text" name="password" value="">
+    <input type="submit" value="OK">
+  </form>
+</div>
+
+<h2>login</h2>
+<div>
+  <form action="/auth/login" method="post">
+    <label for="email">Enter email: </label>
+    <input id="email" type="text" name="email" value="">
+    <label for="password">Enter password: </label>
+    <input id="password" type="text" name="password" value="">
+    <input type="submit" value="OK">
+  </form>
+</div>
+
+<h2>boate create</h2>
+<div>
+  <form action="/boat/create" method="post">
+    <label for="name">Enter name: </label>
+    <input id="name" type="text" name="name" value="">
+    <label for="description">Description </label>
+    <input id="description" type="text" name="description" value="">
+    <label for="price_for_rent">price_for_rent </label>
+    <input id="price_for_rent" type="number" name="price_for_rent" value="">
+    <input type="submit" value="OK">
+  </form>
+</div>
