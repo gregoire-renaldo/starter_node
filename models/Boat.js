@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 // validations à revoir
 // intervals de date à mettre en place
+
+// clé new: true or false to know if it's recently created
 const boatSchema = mongoose.Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String, required: true },

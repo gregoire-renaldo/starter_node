@@ -1,3 +1,5 @@
+mongosh "mongodb+srv://databoats.qcbfi.mongodb.net/myFirstDatabase" --username Greg
+
 'EADDRINUSE' already in use :
 sudo lsof -i :3000
 kill -9 {PID}
@@ -19,3 +21,26 @@ Syntaxe pour l'inclusion d'un partiel EJS
 Utilisez <%- include('RELATIVE/PATH/TO/FILE') %> pour intégrer une partie de EJS dans un autre fichier.
 Le trait d'union <%- au lieu de <% pour dire à EJS de rendre le HTML brut.
 Le chemin vers le partiel est relatif au fichier actuel.
+
+
+Synthaxe async await
+const nameOfFunction = async () => {
+  try {
+    const something = await functionReturningAPromise_1()
+    // do something with promise1
+
+    const somethingElse = await functionReturningAPromise_2()
+    // do something with promise2
+
+  } catch (error) {
+    // do something with error
+    console.log(error)
+  }
+}
+
+const x = await promise
+ return the value of the promise
+
+const x = promise
+return the promise itself use full if you want multiple promises to resolve at the same time
+const all = await Promise.all([promise1, promise2, promise3])

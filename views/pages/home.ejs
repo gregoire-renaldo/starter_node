@@ -4,11 +4,11 @@
 
 <h1>salut</h1>
 <h2>
-  <a href="http://localhost:3000/boat/renter/index">http://localhost:3000/boat/renter/index</a>
+  <a href="http://localhost:3000/boats">http://localhost:3000/boats</a>
 </h2>
 <h2>signup</h2>
 <div>
-  <form action="/auth/signup" method="post">
+  <form action="/signup" method="post">
     <label for="firstname">Enter firstname: </label>
     <input id="firstname" type="text" name="firstname" value="">
     <label for="lastname">Enter lastname: </label>
@@ -17,13 +17,15 @@
     <input id="email" type="text" name="email" value="">
     <label for="password">Enter password: </label>
     <input id="password" type="text" name="password" value="">
+    <label for="passwordConfirm">Enter password: </label>
+    <input id="passwordConfirm" type="text" name="passwordConfirm" value="">
     <input type="submit" value="OK">
   </form>
 </div>
 
 <h2>login</h2>
 <div>
-  <form action="/auth/login" method="post">
+  <form action="/login" method="post">
     <label for="email">Enter email: </label>
     <input id="email" type="text" name="email" value="">
     <label for="password">Enter password: </label>
@@ -34,7 +36,7 @@
 
 <h2>boate create</h2>
 <div>
-  <form action="/boat/create" method="post">
+  <form action="boat/create" method="post">
     <label for="name">Enter name: </label>
     <input id="name" type="text" name="name" value="">
     <label for="description">Description </label>
