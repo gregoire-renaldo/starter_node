@@ -10,7 +10,9 @@ const userSchema = mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valide email']
   },
-  photo: String,
+  photo:{
+    type: String
+  },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   password: {
@@ -26,9 +28,12 @@ const userSchema = mongoose.Schema({
       // only work on creat & save - important for update
       validator: function(el) {
         return el === this.password;
-      }
+              },
+    message: 'passwords are not the same'
     }
   },
+  passwordChangedAt: {
+    type: Date}
 });
 
 userSchema.pre('save',async function(next) {
@@ -47,5 +52,17 @@ userSchema.methods.correctPassword = async function(
   ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  // this = current document
+  if(this.passwordChangedAt) {
+    console.log(this.passwordChangedAt, JWTTimestamp)
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
+    return JWTTimestamp < changedTimestamp
+  }
+  //  return false means no change
+  return false
+}
+
 
 module.exports = mongoose.model('User', userSchema);

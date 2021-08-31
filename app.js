@@ -1,13 +1,15 @@
 // Mise en route Express
 const express = require('express');
+// Dot env to keep secrets !
+require('dotenv').config()
+
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
+
 const app = express();
 
 // Cross-origin requete -- React Next to come
 const cors = require('cors');
-// Dot env to keep secrets !
-require('dotenv').config()
 
 // db Mongo
 const mongoose = require('mongoose');
@@ -50,9 +52,10 @@ app.all('*', (req, res, next) => {
 
 app.use(globalErrorHandler)
 
-const port = 3000
+const port = process.env.PORT || 3000
 const server = app.listen(port,() => {
   console.log(`live sur le port  ${port}!`);
+  console.log(app.get('env'))
 });
 
 // handle promise error if no catch
