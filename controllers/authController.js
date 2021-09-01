@@ -3,6 +3,7 @@ const { promisify } = require('util')
 const jwt = require('jsonwebtoken');
 const User = require('./../models/User')
 const catchAsync = require('./../utils/catchAsync')
+const sendEmail = require('./../utils/email')
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -84,3 +85,59 @@ exports.protect = catchAsync(async(req, res, next) => {
   req.user = currentUser;
   next()
 });
+
+
+// to pass arguments in middlewares routes
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // roles is an array
+    // closure has access to role
+    if(!roles.includes(req.user.role)){
+    return next(new AppError('you do not have permission for this action', 403));
+    }
+    next()
+  };
+};
+
+exports.forgotPassword = catchAsync(async(req, res, next) => {
+  // 1 get user based on email
+  console.log(req.body)
+  const user = await User.findOne({ email: req.body.email })
+  if (!user) {
+    return next(new AppError('user with this email not found', 404))
+  }
+
+  //  generate token
+  const resetToken = user.createPasswordResetToken();
+  // need to save this token to compare
+  await user.save({validateBeforeSave: false});
+  //  send it to user email
+  const resetURL = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
+  const message = `Forgot ypur password? Submit a PATCH request with your new password ans passwordConfirm to: ${resetURL}.\If ypu didn't forget your password, please ignore this email`
+
+    try {
+      // sendEmail is async so await
+      await sendEmail({
+        email: user.email,
+        subject: 'Your password reset token valid for 10 min',
+        message
+      })
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Token sent to email!'
+      })
+    } catch(err) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save( { validateBeforeSave: false})
+
+      return next(new AppError('There was an error sending the password'), 500)
+    }
+
+});
+
+
+exports.resetPassword = (req, res, next) => {
+
+}

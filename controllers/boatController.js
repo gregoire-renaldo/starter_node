@@ -47,11 +47,9 @@ exports.updateBoat = catchAsync(async( req,res,next) => {
 
 exports.deleteBoat = catchAsync(async(req,res,next) => {
   const boat = await Boat.findByIdAndDelete(req.params.id)
-
   if (!boat) {
     return next(new AppError('No boat found with that ID', 404))
   }
-
   res.status(204).json({
     status: 'success',
     data: {

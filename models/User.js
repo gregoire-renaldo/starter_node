@@ -1,3 +1,5 @@
+// crypto is a built in node module
+const crypto = require('crypto')
 const mongoose = require('mongoose');
 const validator = require('validator')
 const bcrypt = require('bcrypt')
@@ -15,6 +17,11 @@ const userSchema = mongoose.Schema({
   },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
+  role: {
+    type: String,
+    enum: ['user', 'boat-owner', 'admin' ],
+    default: 'user',
+  },
   password: {
     type: String,
     required: [true, 'please provide a valid password'] ,
@@ -32,8 +39,9 @@ const userSchema = mongoose.Schema({
     message: 'passwords are not the same'
     }
   },
-  passwordChangedAt: {
-    type: Date}
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date
 });
 
 userSchema.pre('save',async function(next) {
@@ -63,6 +71,20 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   //  return false means no change
   return false
 }
+
+userSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  console.log({resetToken}, this.createPasswordResetToken)
+
+  this.passwordResetExpires = Date.now() + 10*60*1000;
+
+  // to send by email
+  return resetToken;
+}
+
+
 
 
 module.exports = mongoose.model('User', userSchema);
