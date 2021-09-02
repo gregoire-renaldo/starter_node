@@ -101,19 +101,19 @@ exports.restrictTo = (...roles) => {
 
 exports.forgotPassword = catchAsync(async(req, res, next) => {
   // 1 get user based on email
-  console.log(req.body)
   const user = await User.findOne({ email: req.body.email })
   if (!user) {
     return next(new AppError('user with this email not found', 404))
   }
 
-  //  generate token
+  //  2 generate token
   const resetToken = user.createPasswordResetToken();
   // need to save this token to compare
   await user.save({validateBeforeSave: false});
-  //  send it to user email
+
+  //  3send it to user email
   const resetURL = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
-  const message = `Forgot ypur password? Submit a PATCH request with your new password ans passwordConfirm to: ${resetURL}.\If ypu didn't forget your password, please ignore this email`
+  const message = `Forgot your password? Submit a PATCH request with your new password ans passwordConfirm to: ${resetURL}.\nIf ypu didn't forget your password, please ignore this email`
 
     try {
       // sendEmail is async so await
@@ -121,7 +121,7 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
         email: user.email,
         subject: 'Your password reset token valid for 10 min',
         message
-      })
+      });
 
       res.status(200).json({
         status: 'success',
@@ -134,7 +134,6 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
 
       return next(new AppError('There was an error sending the password'), 500)
     }
-
 });
 
 

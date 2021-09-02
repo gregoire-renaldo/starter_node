@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 
 // user routes
 const userRoutes = require('./routes/userRoutes.js')
-app.use('', userRoutes);
+app.use('/user', userRoutes);
 
 // owner boat, authentified, can create ,update, delete a boat
 

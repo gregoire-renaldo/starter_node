@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer')
 
 const sendEmail = async options => {
   // transporter
-  var transport = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     auth: {
@@ -13,16 +13,19 @@ const sendEmail = async options => {
   });
   // define the email options
   const mailOptions = {
-    from 'Greg <greg@boatnbreakfast.io>',
+    from: 'Greg <greg@boatnbreakfast.io>',
     to: options.email,
-    subjext: options.subject,
+    subject: options.subject,
     text: options.message,
     // html
-  }
+  };
   // actually send the email
   // transporter.sendMail returns a promise, so async function :-)
-  await transporter.sendMail(mailOptions)
-}
+  console.log('before sending mail')
+  // should be await transporter.sendmail
+   await transporter.sendMail(mailOptions)
+
+};
 
 module.exports = sendEmail;
 
