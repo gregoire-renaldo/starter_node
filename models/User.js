@@ -44,6 +44,8 @@ const userSchema = mongoose.Schema({
   passwordResetExpires: Date
 });
 
+// isModified, isNew, from mogoose doc : https://mongoosejs.com/docs/api/document.html
+
 userSchema.pre('save',async function(next) {
   // run function only if password modified
   if(!this.isModified('password')) return next();
@@ -51,6 +53,13 @@ userSchema.pre('save',async function(next) {
   this.password = await bcrypt.hash(this.password, 12);
   // delete password field
   this.passwordConfirm = undefined;
+  next();
+})
+
+userSchema.pre('save', function(next) {
+  if (!this.isModifed('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now();
   next();
 })
 
