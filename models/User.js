@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema({
   },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
-  role: {
+  roles: {
     type: String,
     enum: ['user', 'boat-owner', 'admin' ],
     default: 'user',
@@ -41,7 +41,12 @@ const userSchema = mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
 
 // isModified, isNew, from mogoose doc : https://mongoosejs.com/docs/api/document.html
@@ -57,11 +62,21 @@ userSchema.pre('save',async function(next) {
 })
 
 userSchema.pre('save', function(next) {
-  if (!this.isModifed('password') || this.isNew) return next();
-
-  this.passwordChangedAt = Date.now();
+  if (!this.isModified('password') || this.isNew) return next();
+  // timestamp 1 second in the past, to avoid differences (takes time to update, can vary)
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 })
+
+userSchema.pre(/^find/, function(next) {
+  // not arrow function to access this keyword
+  // this points to current query
+  // regex for query starting with find
+  // for getAllUsers, we want to access only the one with property active: true
+  this.find({ active: { $ne: false}});
+  next();
+
+});
 
 userSchema.methods.correctPassword = async function(
   // return true or false
@@ -73,7 +88,7 @@ userSchema.methods.correctPassword = async function(
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   // this = current document
   if(this.passwordChangedAt) {
-    console.log(this.passwordChangedAt, JWTTimestamp)
+    // console.log(this.passwordChangedAt, JWTTimestamp)
     const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
     return JWTTimestamp < changedTimestamp
   }
@@ -83,12 +98,9 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 
 userSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
-
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-  console.log({resetToken}, this.createPasswordResetToken)
-
+  // console.log({resetToken}, this.createPasswordResetToken)
   this.passwordResetExpires = Date.now() + 10*60*1000;
-
   // to send by email
   return resetToken;
 }

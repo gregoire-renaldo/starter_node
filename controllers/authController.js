@@ -11,6 +11,19 @@ const signToken = id => {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 }
+
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
+    status: 'Success',
+    token,
+    data: {
+      user
+    }
+  });
+};
+
+
 // db operations, needs a promise
 exports.signup = catchAsync(async (req, res, next) => {
   // await to return value
@@ -23,20 +36,11 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm
   });
 
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: 'Succes',
-    token,
-    data: {
-      user: newUser
-    }
-  })
+  createSendToken(newUser, 201, res)
 })
 
 
-exports.login = catchAsync(
-  async (req, res, next) => {
+exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
     // email password exist ?
     if (!email || !password) {
@@ -51,20 +55,16 @@ exports.login = catchAsync(
     }
 
     // send token
-    const token = signToken(user._id)
-    res.status(200).json({
-      status: 'success',
-      token
-    });
+    createSendToken(user, 200, res)
   }
-)
+);
 
 
 exports.protect = catchAsync(async(req, res, next) => {
   // get the token , http header req.headers Authorisation Bearer
   // ES6 variables declare in scope, only available in scope
   let token;
-  if(req.headers.authorization && req.headers.authorization.startWith('Bearer')) {
+  if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
   token = req.headers.authorization.split(' ')[1];
   }
   // verification token
@@ -72,7 +72,7 @@ exports.protect = catchAsync(async(req, res, next) => {
     return next(new AppError('You are not logged in, please login', 401))
   }
   // check if user still exist
-  const decode = await promisify (jwt.verify(token, process.JWT_SECRET))
+  const decoded = await promisify (jwt.verify)(token, process.env.JWT_SECRET);
   const currentUser = await User.findById(decoded.id);
   if(!currentUser) {
     return next(new AppError('The token does no longer exist', 401))
@@ -159,10 +159,25 @@ exports.resetPassword = catchAsync(
 
   // 4 Log the user, send the JWT token
     // send token
-    const token = signToken(user._id)
-    res.status(200).json({
-      status: 'success',
-      token
-    });
+    createSendToken(user, 200, res)
+  }
+)
+
+exports.updatePassword = catchAsync(async(req, res, next) => {
+  //  1 get user from collection
+  const user = await User.findById(req.user._id).select('+password');
+  // 2 check if posted password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError('current password is wrong', 40))
+  }
+  // 3 if so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  //  !!! Not USer.findByIdAndUpdate :  validations are not going to work,
+  //      and middleware to encrypt passwords wont work
+  await user.save();
+  // 4 log in user user, send JWT
+  const token = signToken(user._id)
+  createSendToken(user, 200, res)
   }
 )
