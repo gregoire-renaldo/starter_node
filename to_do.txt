@@ -1,0 +1,23 @@
+implement rate limiting (express-rate-limit)
+implement maximum login attempts
+
+cross site scripting XSS attacks
+store JWT in httpOnly cookies
+Sanitize user input data
+set special http header (helmet package)
+
+DOS attacks
+implement rate limiting
+limit body payload (in body-parser)
+
+nosql
+sanitize user input data
+
+others
+prevent cross site request forgery (csurf package)
+require re-auth before high-value action
+implement a blacklist of untrusted JWT
+Confirm user email address after creating first account
+keep user logged in with fresh tokens
+implement 2 factors auth
+Prevent parameter pollution causing Uncaught exceptions

@@ -1,4 +1,6 @@
 mongosh "mongodb+srv://databoats.qcbfi.mongodb.net/myFirstDatabase" --username Greg
+db.users.deleteMany({})
+
 
 'EADDRINUSE' already in use :
 sudo lsof -i :3000
