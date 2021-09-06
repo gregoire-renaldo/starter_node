@@ -1,6 +1,6 @@
 starter with models : user & auth, boat(==thing), protected routes, restricted routes
 
-create .env with :
+1/ create .env with :
 
 NODE_ENV=development
 PORT=3000
@@ -26,5 +26,5 @@ EMAIL_PORT=2525
 
 
 create git.ignore
-node_modules/
+2/ node_modules/
 .env
