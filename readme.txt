@@ -25,6 +25,6 @@ EMAIL_HOST=
 EMAIL_PORT=2525
 
 
-create git.ignore
-2/ node_modules/
+#create git.ignore
+node_modules/
 .env
